@@ -9,17 +9,16 @@
 #   Email:      evan {ą} evanjt ! com
 
 import turtle
-import math
 
 # Program constants
 DECREASE_STITCH_REMOVES = 2 # knit 2 together (k2tog) dereases 2 stitches to 1
 
 # Turtle constants
-CIRCLE_RADIUS = 150         # For the simulation display
-DEGREES_IN_CIRCLE = 360
-DEFAULT_TURTLE_SCREEN_X = 400
-DEFAULT_TURTLE_SCREEN_Y = 400
-CIRCLE_BREAK_POINT_SIZE = 4
+CIRCLE_RADIUS = 150             # For the simulation display
+DEGREES_IN_CIRCLE = 360         # Well known constant
+DEFAULT_TURTLE_SCREEN_X = 400   # Screen width
+DEFAULT_TURTLE_SCREEN_Y = 400   # Screen height
+CIRCLE_BREAK_POINT_SIZE = 4     # Dot size indicating point of decrease
 
 def draw_crown(circle_size, partitions, screensizex, screensizey, circle_deg, dot_size):
     angle_per_turn = circle_deg/partitions
@@ -49,11 +48,11 @@ def form_explanation():
 
 # Calculates the decrease possibilities based on the input stitch amount
 # and returns a list of tuples on (sections, stitches per section, rows until end)
-def calculate_decrease_possibilities(stitches_in_round):
+def calculate_decrease_possibilities(stitches_in_round, stitches_removed_in_decrease):
     possibility_list = []
     for i in range(1,stitches_in_round):
         divisable_groups = stitches_in_round % i
-        stitches_per_group = (stitches_in_round / i) - DECREASE_STITCH_REMOVES
+        stitches_per_group = (stitches_in_round / i) - stitches_removed_in_decrease
         if (divisable_groups == 0) and (stitches_per_group >= 0):
             stitch_count = stitches_in_round
             count = 0
@@ -69,7 +68,7 @@ def print_possibilities(possibility_list):
         print("[{:2}] Decrease sections: {:3} | Stitches per section: {:3} | Rows: {:3}".format( \
                             idx, possibility[0], possibility[1], possibility[2]))
 
-def decrease_pattern(num_stitches, decrease_amount):
+def decrease_pattern(num_stitches, decrease_amount, stitches_removed_in_decrease):
     stitches_between = int(decrease_amount[1])
     decrease_count = int(decrease_amount[0])
     remaining_stitches = int(num_stitches - decrease_count)
@@ -81,21 +80,22 @@ def decrease_pattern(num_stitches, decrease_amount):
             print("Row {:2} | Stitch count {:3} | Stitches between decreases {:3} | Stitches after decrease {:3}".format(seq, num_stitches, int(stitches_between), int(remaining_stitches)))
 
         num_stitches = remaining_stitches
-        stitches_between = (num_stitches / decrease_count) - DECREASE_STITCH_REMOVES
+        stitches_between = (num_stitches / decrease_count) - stitches_removed_in_decrease
         remaining_stitches -= decrease_count
 
 def main():
     print(form_explanation())
     num_stitches = input("Enter number of stitches in the round: ")
-    possibility_list = calculate_decrease_possibilities(int(num_stitches))
+    possibility_list = calculate_decrease_possibilities(int(num_stitches), DECREASE_STITCH_REMOVES)
     print_possibilities(possibility_list)
 
     print()
     choice = input("Choose desired pattern using the index number: ")
-    decrease_pattern(int(num_stitches), possibility_list[int(choice)])
-    decrease_amount = possibility_list[int(choice)][0]
+    decrease_amount = possibility_list[int(choice)]
+    decrease_pattern(int(num_stitches), decrease_amount, DECREASE_STITCH_REMOVES)
 
-    draw_crown(CIRCLE_RADIUS, decrease_amount, DEFAULT_TURTLE_SCREEN_X, DEFAULT_TURTLE_SCREEN_Y,
+    # Draw in Turtle
+    draw_crown(CIRCLE_RADIUS, decrease_amount[0], DEFAULT_TURTLE_SCREEN_X, DEFAULT_TURTLE_SCREEN_Y,
                 DEGREES_IN_CIRCLE, CIRCLE_BREAK_POINT_SIZE)
 
 
