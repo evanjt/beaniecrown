@@ -23,18 +23,21 @@ DEFAULT_TURTLE_SCREEN_X = 400   # Screen width
 DEFAULT_TURTLE_SCREEN_Y = 400   # Screen height
 CIRCLE_BREAK_POINT_SIZE = 4     # Dot size indicating point of decrease
 
-def draw_crown(circle_size, partitions, screensizex, screensizey, circle_deg, dot_size):
+def draw_crown(circle_sizes, partitions, screensizex, screensizey, circle_deg, dot_size):
     angle_per_turn = circle_deg/partitions
     turtle.setup(screensizex, screensizey)
     t = turtle.Turtle()
     window = turtle.Screen()
-    t.penup()               # Shift the centre
-    t.goto(0,-circle_size)  # of circle downwards
-    t.pendown()             # one full radius to fit
     t.speed(11) # Speed 1 slowest 11 fastest
-    for i in range(partitions):
-        t.circle(circle_size, extent=angle_per_turn)
-        t.dot(dot_size)
+
+    for beanie_reduction in circle_sizes:
+        t.penup()               # Shift the centre
+        t.goto(0,-beanie_reduction[1])  # of circle downwards
+        t.pendown()             # one full radius to fit
+        for i in range(partitions):
+            t.circle(beanie_reduction[1], extent=angle_per_turn)
+            t.dot(dot_size)
+
     window.exitonclick() # User must click to exit
 
 def form_explanation():
@@ -76,15 +79,18 @@ def decrease_pattern(num_stitches, decrease_amount, stitches_removed_in_decrease
     decrease_count = int(decrease_amount[0])
     remaining_stitches = int(num_stitches - decrease_count)
 
+    pattern_list = []
     for seq in range(1, decrease_amount[2]+1):
         if seq == int(decrease_amount[2]):
-            print("Row {:2} | Stitch count {:3}".format(seq, num_stitches, int(stitches_between), int(remaining_stitches)))
+            print("Row {:2} | Stitch count {:3}".format(seq, num_stitches))
         else:
             print("Row {:2} | Stitch count {:3} | Stitches between decreases {:3} | Stitches after decrease {:3}".format(seq, num_stitches, int(stitches_between), int(remaining_stitches)))
-
+        pattern_list.append((seq, num_stitches, stitches_between, remaining_stitches))
         num_stitches = remaining_stitches
         stitches_between = (num_stitches / decrease_count) - stitches_removed_in_decrease
         remaining_stitches -= decrease_count
+
+    return pattern_list
 
 def main():
     print(form_explanation())
@@ -95,11 +101,12 @@ def main():
     print()
     choice = input("Choose desired pattern using the index number: ")
     decrease_amount = possibility_list[int(choice)]
-    decrease_pattern(int(num_stitches), decrease_amount, DECREASE_STITCH_REMOVES)
+    pattern_list = decrease_pattern(int(num_stitches), decrease_amount, DECREASE_STITCH_REMOVES)
 
     # Draw in Turtle
-    draw_crown(CIRCLE_RADIUS, decrease_amount[0], DEFAULT_TURTLE_SCREEN_X, DEFAULT_TURTLE_SCREEN_Y,
+    draw_crown(pattern_list, decrease_amount[0], DEFAULT_TURTLE_SCREEN_X, DEFAULT_TURTLE_SCREEN_Y,
                 DEGREES_IN_CIRCLE, CIRCLE_BREAK_POINT_SIZE)
+
 
 
 if __name__ == '__main__':
