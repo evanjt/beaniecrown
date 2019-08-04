@@ -16,3 +16,11 @@ apt install python3-tk
 With 120 stitches in the round, decreasing in 15 rows:
 
 ![beanie](assets/beanie.png)
+
+
+
+## Credit
+
+This code was guided by the advice given on:
+
+https://fortheknitofit.wordpress.com/2013/07/11/knitting-101-hats-decreasing-the-crown/

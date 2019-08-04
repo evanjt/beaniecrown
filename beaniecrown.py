@@ -5,6 +5,9 @@
 #   to help with the determination of stitches  needed to decrease a beanie's
 #   crown.
 #
+#   This code was guided by the advice given on:
+#   https://fortheknitofit.wordpress.com/2013/07/11/knitting-101-hats-decreasing-the-crown/
+#
 #   Author:     Evan Thomas
 #   Email:      evan {ą} evanjt ! com
 
